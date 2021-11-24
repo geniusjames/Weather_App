@@ -22,17 +22,14 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     @IBOutlet weak var weatherConditionImage: UIImageView!
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view.
         weatherTableView.reloadData()
         vm.weatherData = updateCurrentWeatherViews
         vm.forecastData = updateForecastData
-        
         vm.populateCurrentWeatherView()
         vm.populateWeatherForecastView()
-        
         weatherTableView.delegate = self
         weatherTableView.dataSource = self
- 
+        
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -40,9 +37,10 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     }
     
     func updateCurrentWeatherViews() {
+        self.view.backgroundColor = self.vm.currentWeatherVM?.backgroundColor
         self.weatherTableView.backgroundColor = self.vm.currentWeatherVM?.backgroundColor
         self.stackView.backgroundColor = self.vm.currentWeatherVM?.backgroundColor
-        self.weatherTypeLabel.text = self.vm.currentWeatherVM?.weatherDescription
+        self.weatherTypeLabel.text = self.vm.currentWeatherVM?.weatherType
         self.minTemperatureLabel.text = self.vm.currentWeatherVM?.minTemp
         self.tempLargeLabel.text = self.vm.currentWeatherVM!.currentTemp
         self.currentTempLabel.text = self.vm.currentWeatherVM?.currentTemp

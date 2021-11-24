@@ -16,21 +16,26 @@ struct CurrentWeatherViewModel{
     var maxTemp: String
     var currentTemp: String
     var weatherDescription: String
+    var weatherType: String
     init(with model: CurrentWeather){
-        minTemp = String(Int(model.main.temp_min))
-        maxTemp = String(Int(model.main.temp_max))
-        currentTemp = String(Int(model.main.temp))
+        minTemp = String(Int(model.main.temp_min)) + "°"
+        maxTemp = String(Int(model.main.temp_max)) + "°"
+        currentTemp = String(Int(model.main.temp)) + "°"
         weatherDescription = (model.weather?[0].main)!
         
+        
         if weatherDescription == "Clear"{
+            weatherType = "SUNNY"
             backgroundImage = UIImage(imageLiteralResourceName: "sea_sunnypng")
             backgroundColor = UIColor(red: 71/225, green: 171/225, blue: 47/225, alpha: 1)
         }
         else if weatherDescription == "Clouds"{
+            weatherType = "CLOUDY"
             backgroundImage = UIImage(imageLiteralResourceName: "sea_cloudy")
             backgroundColor = UIColor(red: 84/225, green: 113/225, blue: 112/225, alpha: 1)
         }
         else{
+            weatherType = "RAINY"
             backgroundImage = UIImage(imageLiteralResourceName: "sea_rainy")
             backgroundColor = UIColor(red: 87/225, green:87/225, blue: 93/225, alpha: 1)
         }
@@ -44,7 +49,7 @@ struct WeatherForecastViewModel{
     var temp: String
     var weatherType: String
     init(with model: List){
-        temp = String(Int(model.main.temp))
+        temp = String(Int(model.main.temp)) + "°"
         print(index)
         weatherType = model.weather.description
         
@@ -85,18 +90,17 @@ class ControllerViewModel{
             
             DispatchQueue.main.async {
                 self?.currentWeatherVM = CurrentWeatherViewModel(with: currentWeatherData)
-                
-                
+              
                 self?.weatherData?()
-           
+                
             }
         }
-
-
+        
+        
     }
     
     func populateWeatherForecastView(){
-
+        
         netWorkRequest.fetchForecastData(){ [weak self] forecastData in
             DispatchQueue.main.async {
                 self?.weatherForecastVM = []
@@ -105,37 +109,37 @@ class ControllerViewModel{
                     self?.weatherForecastVM?.append(weatherForecat)
                 }
                 self?.forecastData?()
-
+                
             }
             
             
             
         }
     }
-  
+    
 }
 
 class NetworkRequest {
-
+    
     var currentWeather: CurrentWeather?
     
     func fetch(completionHandler: @escaping (CurrentWeather)-> Void){
         
-         let currentWeatherURL = URL(string: "https://api.openweathermap.org/data/2.5/weather?q=lagos&appid=9477593aa7652cc46df3495f4e2945af&units=metric")
+        let currentWeatherURL = URL(string: "https://api.openweathermap.org/data/2.5/weather?q=lagos&appid=9477593aa7652cc46df3495f4e2945af&units=metric")
         URLSession.shared.request(url: currentWeatherURL, expecting: CurrentWeather.self){
             result in
             switch result{
             case .success(let weather):
                 
                 completionHandler(weather)
-
+                
                 
             case .failure(let error):
                 print(error)
             }
         }
     }
-
+    
     func fetchForecastData(completiionHandler: @escaping (WeatherForecastData) -> Void){
         let weatherForecastURL = URL(string: "https://api.openweathermap.org/data/2.5/forecast?q=lagos&appid=9477593aa7652cc46df3495f4e2945af&units=metric")
         URLSession.shared.request(url: weatherForecastURL, expecting: WeatherForecastData.self){
@@ -148,5 +152,5 @@ class NetworkRequest {
             }
         }
     }
-
+    
 }
